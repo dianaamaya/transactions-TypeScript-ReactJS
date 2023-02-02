@@ -1,0 +1,25 @@
+.searchForm input {
+    background-image: url('../assets/search.svg');
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position: 6px 6px;
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px 12px 45px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+@media screen and (max-width: 992px) { 
+    .searchForm {
+        width: 50%;
+    }
+}
+
+
+@media screen and (max-width: 576px) { 
+    .searchForm {
+        width: 100%;
+        margin-top: 3em;
+    }
+}

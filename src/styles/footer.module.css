@@ -1,0 +1,8 @@
+.footer {
+    background: #000000;
+    color: #ffffff;
+    padding: 1em;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-end;
+}

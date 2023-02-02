@@ -1,0 +1,46 @@
+.main__transaction {
+    padding: 2em 1em;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.transaction__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1em 0;
+}
+
+.transaction__resume {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding-right: 1em;
+}
+
+.transaction__balance {
+    font-size: 20px;
+}
+
+@media screen and (max-width: 992px) { 
+    .transaction__header {
+        flex-direction: column-reverse;
+        padding-top: 0;
+    }
+
+    .transaction__resume {
+        width: 100%;
+        text-align: right;
+        padding-right: 0;
+    }
+}
+
+@media screen and (max-width: 576px) { 
+    .transaction__balance {
+        text-align: left;
+    }
+}

@@ -1,0 +1,82 @@
+.nav__blur,
+.nav__mobile {
+  display: none;
+}
+
+.nav ul {
+  list-style-type:none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav li + li {
+  margin-left: 1em;
+}
+
+.nav a {
+  color: #000000;
+  text-decoration: none;
+}
+
+.nav a[aria-current] {
+  font-weight: 600;
+}
+
+@media screen and (max-width: 576px) { 
+
+  .nav {
+    z-index: 6;
+  }
+
+  .nav__blur {
+    display: block;
+    background: rgb(0,0,0,0.5);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+  }
+
+  .nav__mobile {
+    display: block;
+    font-size: 30px;
+    padding: 0;
+    line-height: 0;
+    cursor: pointer;
+    background: transparent;
+    border: navajowhite;
+    z-index: 20;
+  }
+
+  .nav__mobile + ul {
+    position: absolute;
+    right: 0;
+    flex-direction: column;
+    background: #f2f2f2;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    display: none;
+  }
+
+  .nav__mobile + ul.nav__in {
+    display: block;
+  }
+
+  .nav__mobile + ul li {
+    margin-left: 0;
+  }
+
+  .nav__mobile + ul li + li {
+    border-top: 1px solid #cccccc;
+  }
+
+  .nav__mobile + ul li a{
+    padding: 0.5em 2em;
+    display: block;
+  }
+
+}
