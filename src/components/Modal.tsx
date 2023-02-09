@@ -9,7 +9,7 @@ type PropsType = {
 const Modal = ({ okFunction, cancelFunction, title }: PropsType) => {
 
     const content = (
-      <div className={modalStyle.modal}>
+      <div data-testid='modal' className={modalStyle.modal}>
         <div 
           className={modalStyle.modal__blur} 
           onClick={cancelFunction}

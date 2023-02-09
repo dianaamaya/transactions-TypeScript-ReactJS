@@ -12,7 +12,7 @@ const Content = () => {
         <main className={contentStyle.main__transaction}>
             <div className={contentStyle.transaction__header}>
                 <div className={contentStyle.transaction__resume}>
-                    <p className={contentStyle.transaction__balance}>
+                    <p data-testid="balance" className={contentStyle.transaction__balance}>
                         <b>Balance:</b> {balance}
                     </p>
                     <Filter />
