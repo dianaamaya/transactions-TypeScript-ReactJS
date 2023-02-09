@@ -1,5 +1,5 @@
 import { ReactElement, memo } from "react"
-import { TransactionItemType } from "../../context/TransactionsProvider"
+import { TransactionItemType } from "../../context/types"
 import { FaRegTrashAlt } from "react-icons/fa"
 import moment from 'moment-timezone'
 

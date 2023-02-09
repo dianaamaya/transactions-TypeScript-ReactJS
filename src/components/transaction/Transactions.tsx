@@ -1,19 +1,23 @@
-import { ReactElement, useState } from "react"
+import { ReactElement, useState, useEffect } from "react"
+import { getTransactions, deleteTransaction } from "../../context/apiRequest"
 import useTransactions from "../../hooks/useTransactions"
 import SingleTransaction from "./SingleTransaction"
 import Pagination from "../Pagination"
 import Modal from "../Modal"
-import Alert from "../Alert"
 import transactionsStyle from "../../styles/transactions.module.css"
 
 type PropsType = {}
 
 const Transactions = (props: PropsType) => {
 
-  const { dispatch, REDUCER_ACTIONS, transactions } = useTransactions()
+  const { dispatch, transactions } = useTransactions()
   const [modal, setModal] = useState<boolean>(false)
-  const [alert, setAlert] = useState<string>("")
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [selectedTransaction, setSelectedTransaction] = useState<number | null>(null)
+
+  useEffect(() => {
+		getTransactions(dispatch).then(() => setLoaded(true))
+  }, [dispatch])
 
   const cancelRemoveTransaction = () => {
     setModal(false) 
@@ -23,32 +27,18 @@ const Transactions = (props: PropsType) => {
   const removeTransaction = () => {
 
     if (selectedTransaction !== null) {
-      try {
-        dispatch({ 
-          type: REDUCER_ACTIONS.REMOVE, 
-          payload: { transactionId: selectedTransaction }
-        })
-
-        window.scrollTo({
-          behavior: 'smooth',
-          top: 0,
-        })
-
-        setModal(false)
-        setSelectedTransaction(null)
-        setAlert("success")
-        setTimeout(() => setAlert(""), 2000)
-      } catch (error) {
-        console.error(error);
-        setModal(false)
-        setAlert("danger")
-        setTimeout(() => setAlert(""), 2000)
-      }
+      deleteTransaction(dispatch, selectedTransaction)
+      window.scrollTo({
+        behavior: 'smooth',
+        top: 0,
+      })
+      setModal(false)
+      setSelectedTransaction(null)
     }
     
   }
 
-  let content: ReactElement | ReactElement[] = <p>No Data Found</p>
+  let content: ReactElement | ReactElement[] = <p>{ loaded ? "No Data Found" : "Loading..."}</p>
 
   if (transactions?.length) {
 
@@ -63,17 +53,9 @@ const Transactions = (props: PropsType) => {
 
     content = <>
       <div className={transactionsStyle.transaction__table__container}>
-        {
-          alert === "success" || alert === "danger"
-          ? <>
-              <Alert 
-                message={alert === "danger" ? "Something was wrong..." : "Transaction was deleted successfully!"} 
-                type={alert} /> 
-              <br/>
-            </>
-          : null
-        }
+      
         <table 
+          data-testid='transactionsTable'
           className={transactionsStyle.transaction__table}>
           <thead>
             <tr>

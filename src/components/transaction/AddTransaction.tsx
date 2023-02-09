@@ -1,8 +1,8 @@
 import { useState, FormEvent, ChangeEvent, useCallback } from "react"
 import { FaPlus } from "react-icons/fa"
-import moment from 'moment-timezone'
+import moment from "moment-timezone"
+import { addSingleTransaction } from "../../context/apiRequest"
 import useTransactions from "../../hooks/useTransactions"
-import Alert from "../Alert"
 import addTransactionStyle from "../../styles/addTransaction.module.css"
 
 
@@ -42,11 +42,10 @@ const initValidateFormState = {
 
 const AddTransaction = (props: PropsType) => {
     
-    const { dispatch, REDUCER_ACTIONS, transactions } = useTransactions()
+    const { dispatch, transactions } = useTransactions()
     const [newTransaction, setNewTransaction] = useState<formType>(initFormState)
     const [validations, setValidations] = useState<validateFormType>(initValidateFormState)
     const [validated, setValidated] = useState<boolean>(false)
-    const [alert, setAlert] = useState<string>("")
 
     const validateForm = useCallback(( currentTransaction: formType):validateFormType =>  {
 
@@ -98,24 +97,11 @@ const AddTransaction = (props: PropsType) => {
             date,
             description,
         }
-        
-        try {
-            dispatch({ 
-                type: REDUCER_ACTIONS.ADD, 
-                payload: { transaction: myNewTransaction }
-            })
 
-            setAlert("success")
-            setTimeout(() => {setAlert("")}, 2000)
-            setNewTransaction(initFormState)
-            setValidations(initValidateFormState)
-            setValidated(false)
-        } catch (error) {
-            console.error(error);
-            setAlert("danger")
-            setTimeout(() => {setAlert("")}, 2000)
-        }
-
+        addSingleTransaction(dispatch, myNewTransaction)
+        setNewTransaction(initFormState)
+        setValidations(initValidateFormState)
+        setValidated(false)
     }
 
     const updateTransactionState = useCallback((key:string) =>(e:ChangeEvent<HTMLInputElement>): void => {
@@ -135,7 +121,7 @@ const AddTransaction = (props: PropsType) => {
             
             <label htmlFor="addAmount">Amount</label>
             <input 
-                    id="addAmount" 
+                    id="addAmount"
                     value={newTransaction.amount}
                     onChange={updateTransactionState("amount")} />
             {
@@ -193,14 +179,6 @@ const AddTransaction = (props: PropsType) => {
                 <div className={addTransactionStyle.addForm__error}>
                     { validations.description }
                 </div> 
-            }
-
-            {
-                alert === "success" || alert === "danger"
-                    ? <Alert 
-                        message={alert === "danger" ? "Something was wrong..." : "Transaction was added successfully!"} 
-                        type={alert} />
-                    : null
             }
             
             <button type="submit">

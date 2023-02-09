@@ -2,6 +2,7 @@ import useTransactions from "../../hooks/useTransactions"
 import Transactions from "./Transactions"
 import AddTransaction from "./AddTransaction"
 import Filter from "../Filter"
+import Message from "../Message"
 import contentStyle from "../../styles/content.module.css"
 
 const Content = () => {
@@ -19,6 +20,7 @@ const Content = () => {
                 <AddTransaction />
             </div>
             <Transactions />
+            <Message />
         </main>
     )
 

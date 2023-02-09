@@ -3,12 +3,13 @@ import Header from "./components/Header"
 import Content from "./components/transaction/Content"
 import Description from "./components/Description"
 import Footer from "./components/Footer"
-
+import { TransactionsProvider } from './context/TransactionsProvider'
 
 function App() {
   
   const content = (
     <>
+     <TransactionsProvider>
       <Router>
         <Header />
         <Routes>
@@ -17,6 +18,7 @@ function App() {
         </Routes>
         <Footer />
       </Router>
+      </TransactionsProvider>
     </>
   )
 

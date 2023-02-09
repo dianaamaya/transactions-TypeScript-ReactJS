@@ -1,50 +1,25 @@
-import { useMemo, useEffect, useReducer, createContext, ReactElement } from "react"
-import moment from 'moment-timezone'
-
-export type TransactionItemType = {
-    id: number,
-    amount: number,
-    beneficiary: string,
-    account: string,
-    address: string,
-    date: string,
-    description: string,
-}
-
-type TransactionStateType = { 
-	search: string,
-	pagination: number,
-	transactions: TransactionItemType[] 
-}
+import { useMemo, useReducer, createContext, ReactElement } from "react"
+import moment from "moment-timezone"
+import { ADD, REMOVE, FILTER, CHANGE_PAGINATION, SET_DATA, SET_MESSAGE } from "./reducerTypes"
+import { TransactionItemType, TransactionStateType, ReducerAction, message } from "./types"
 
 const initTransactionState: TransactionStateType = { 
-	search:'', 
+	search: "", 
 	pagination: 1,
-	transactions: []
+	transactions: [],
+    message: { type:"success", msg: ""},
 }
 
-const REDUCER_ACTION_TYPE = {
-    ADD: "ADD",
-    REMOVE: "REMOVE",
-	FILTER: "FILTER",
-	CHANGE_PAGINATION: "CHANGE_PAGINATION",
-	SET_DATA: "SET_DATA",
-}
-
-type payloadTransactionType = {
-	search?: string,
-	pagination?: number,
-	transaction?: TransactionItemType,
-	transactionId?: number,
-	transactionsList?: TransactionItemType[]
+const REDUCER_ACTION_TYPE = { 
+    ADD, 
+    REMOVE, 
+    FILTER, 
+    CHANGE_PAGINATION, 
+    SET_DATA, 
+    SET_MESSAGE
 }
 
 export type ReducerActionType = typeof REDUCER_ACTION_TYPE
-
-export type ReducerAction = {
-    type: string,
-    payload?: payloadTransactionType,
-}
 
 const reducer = (state: TransactionStateType, action: ReducerAction): TransactionStateType => {
     switch (action.type) {
@@ -101,6 +76,16 @@ const reducer = (state: TransactionStateType, action: ReducerAction): Transactio
 
             return { ...state, transactions: [...transactionsList] }
         }
+
+        case REDUCER_ACTION_TYPE.SET_MESSAGE: {
+            if (action?.payload?.message === undefined) {
+                throw new Error('action.payload missing in CHANGE_PAGINATION action')
+            }
+
+            const { message } = action.payload
+
+            return { ...state, message: message }
+        }
         default:
             throw new Error('Unidentified reducer action type')
     }
@@ -109,35 +94,6 @@ const reducer = (state: TransactionStateType, action: ReducerAction): Transactio
 const useTransactionContext = () => {
 
 	const [state, dispatch] = useReducer(reducer, initTransactionState)
-
-	useEffect(() => {
-
-		const fetchTransactions = async(): Promise<TransactionItemType[]> => {
-			try {
-				const response = await fetch(process.env.REACT_APP_GET_TRANSACTION_API || "")
-                
-				if (!response.ok) {
-					throw new Error(`HTTP error: ${response.status}`);
-				}
-	
-				const data = await response.json()
-				return data
-			}
-			catch (error) {
-				console.error(`Fetch transactions problem: ${error}`)
-				return []
-			}
-		}
-		const promise = fetchTransactions();
-		
-		promise.then(transactionsData => {
-			dispatch({
-				type: REDUCER_ACTION_TYPE.SET_DATA,
-				payload: { transactionsList: transactionsData }
-			})
-		})
-		
-    }, [])
 
     const REDUCER_ACTIONS = useMemo((): ReducerActionType => {
         return REDUCER_ACTION_TYPE
@@ -159,9 +115,10 @@ const useTransactionContext = () => {
 		? transactions.filter(transaction => 
 			((transaction.beneficiary).toLowerCase()).includes(state.search.toLocaleLowerCase()))
 		: transactions
-	}, [state.search, transactions])
+	}, [state.search, transactions]) 
 
     const pagination: number = state.pagination
+    const message: message = state.message
     const transactionQty: number = filteredTransactions.length		
 	const initialPosition: number = 20 * (pagination - 1)
 	const transactionsInPage: TransactionItemType[] = 
@@ -173,7 +130,8 @@ const useTransactionContext = () => {
 		balance, 
 		transactions: transactionsInPage,
 		pagination, 
-		transactionsQty: transactionQty 
+		transactionsQty: transactionQty,
+        message
 	}
 }
 
@@ -182,10 +140,11 @@ export type UseTransactionContextType = ReturnType<typeof useTransactionContext>
 const initTransactionContextState: UseTransactionContextType = {
     dispatch: () => {},
     REDUCER_ACTIONS: REDUCER_ACTION_TYPE,
-    balance: '',
+    balance: "",
     transactions: [],
 	pagination: 1,
 	transactionsQty: 0,
+    message: { type: "success", msg: ""}
 }
 
 const TransactionContext = createContext<UseTransactionContextType>(initTransactionContextState)
