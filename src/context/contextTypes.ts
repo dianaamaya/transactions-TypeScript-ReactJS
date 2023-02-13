@@ -16,8 +16,7 @@ export type message = {
 export type StateType = { 
 	search: string,
 	pagination: number,
-	transactions: TransactionType[] ,
-    message: message,
+	transactions: TransactionType[],
 }
 
 export enum REDUCER_ACTION_TYPE { 
@@ -25,8 +24,7 @@ export enum REDUCER_ACTION_TYPE {
     REMOVE = "REMOVE", 
     FILTER = "FILTER", 
     CHANGE_PAGINATION = "CHANGE_PAGINATION", 
-    SET_DATA = "SET_DATA", 
-    SET_MESSAGE = "SET_MESSAGE"
+    SET_DATA = "SET_DATA"
 }
 
 export type ReducerActionType = typeof REDUCER_ACTION_TYPE
@@ -56,9 +54,4 @@ type setData = {
     payload: TransactionType[]
 }
 
-type setMessage = {
-    type: REDUCER_ACTION_TYPE.SET_MESSAGE,
-    payload: message
-}
-
-export type ReducerAction = add | remove | filter | changePagination | setData |  setMessage
+export type ReducerAction = add | remove | filter | changePagination | setData

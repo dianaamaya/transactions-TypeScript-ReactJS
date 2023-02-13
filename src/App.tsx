@@ -1,24 +1,27 @@
 import { Routes, Route, BrowserRouter as Router} from 'react-router-dom'
 import Header from "./components/Header"
-import Content from "./components/transaction/Content"
+import Transactions from "./components/transaction/Content"
 import Description from "./components/Description"
 import Footer from "./components/Footer"
+import { MainProvider } from './context/MainProvider'
 import { TransactionsProvider } from './context/TransactionsProvider'
 
 function App() {
   
   const content = (
     <>
-     <TransactionsProvider>
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Content />} />
-          <Route path="/description" element={<Description />} />
-        </Routes>
-        <Footer />
-      </Router>
-      </TransactionsProvider>
+    <MainProvider>
+      <TransactionsProvider>
+        <Router>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Transactions />} />
+            <Route path="/description" element={<Description />} />
+          </Routes>
+          <Footer />
+        </Router>
+        </TransactionsProvider>
+      </MainProvider>
     </>
   )
 

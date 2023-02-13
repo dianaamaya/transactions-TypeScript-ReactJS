@@ -1,7 +1,8 @@
 import { ReducerAction, TransactionType } from "./contextTypes"
-import { REDUCER_ACTION_TYPE } from "./contextTypes"
+import { REDUCER_ACTION_TYPE, message } from "./contextTypes"
 
- const getTransactions = async (dispatch: React.Dispatch<ReducerAction>) => {
+ const getTransactions = async (dispatch: React.Dispatch<ReducerAction>, 
+    setMessage: React.Dispatch<React.SetStateAction<message>>) => {
 
     try {
         const response = await fetch(process.env.REACT_APP_GET_TRANSACTION_API || "")
@@ -12,17 +13,16 @@ import { REDUCER_ACTION_TYPE } from "./contextTypes"
         })
     }
     catch (error) {
-        dispatch({ 
-            type: REDUCER_ACTION_TYPE.SET_MESSAGE, 
-            payload: {
-                msg: `Problem getting transactions: ${error}`, 
-                type: "danger"
-            }
+        setMessage({
+            msg: `Problem getting transactions: ${error}`, 
+            type: "danger"
         })
     }
 }
 
-const addSingleTransaction = (dispatch: React.Dispatch<ReducerAction>, newTransaction: TransactionType ) => {
+const addSingleTransaction = (dispatch: React.Dispatch<ReducerAction>, 
+    setMessage: React.Dispatch<React.SetStateAction<message>>,
+    newTransaction: TransactionType ) => {
 
     try {
         // add transaction - server request
@@ -30,26 +30,22 @@ const addSingleTransaction = (dispatch: React.Dispatch<ReducerAction>, newTransa
             type: REDUCER_ACTION_TYPE.ADD, 
             payload: newTransaction
         })
-        dispatch({ 
-            type: REDUCER_ACTION_TYPE.SET_MESSAGE, 
-            payload: {
-                msg: "Transaction was added successfully!", 
-                type: "success"
-            }
+        setMessage({
+            msg: "Transaction was added successfully!", 
+            type: "success"
         })
     } catch (error) {
-        dispatch({ 
-            type: REDUCER_ACTION_TYPE.SET_MESSAGE, 
-            payload: {
-                msg: `Problem adding the transaction: ${error}`, 
-                type: "danger"
-            }
+        setMessage({
+            msg: `Problem adding the transaction: ${error}`, 
+            type: "danger"
         })
     }
 }
 
 
-const deleteTransaction = (dispatch: React.Dispatch<ReducerAction>, transactionId: number) => {
+const deleteTransaction = (dispatch: React.Dispatch<ReducerAction>, 
+    setMessage: React.Dispatch<React.SetStateAction<message>>,
+    transactionId: number) => {
 
     try {
         // delete transaction - server request
@@ -57,20 +53,14 @@ const deleteTransaction = (dispatch: React.Dispatch<ReducerAction>, transactionI
           type: REDUCER_ACTION_TYPE.REMOVE, 
           payload: transactionId
         })
-        dispatch({ 
-            type: REDUCER_ACTION_TYPE.SET_MESSAGE, 
-            payload: {
-                msg: "transaction was deleted successfully!", 
-                type: "success"
-            }
+        setMessage({
+            msg: "transaction was deleted successfully!", 
+            type: "success"
         })
       } catch (error) {
-        dispatch({ 
-            type: REDUCER_ACTION_TYPE.SET_MESSAGE, 
-            payload: {
-                msg: `Problem deleting the transaction: ${error}`, 
-                type: "danger"
-            }
+        setMessage({
+            msg: `Problem deleting the transaction: ${error}`, 
+            type: "danger"
         })
       }
 }

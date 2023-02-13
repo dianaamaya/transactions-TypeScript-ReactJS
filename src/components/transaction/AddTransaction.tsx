@@ -3,6 +3,7 @@ import { FaPlus } from "react-icons/fa"
 import moment from "moment-timezone"
 import { addSingleTransaction } from "../../context/apiRequest"
 import useTransactions from "../../hooks/useTransactions"
+import useMainProvider from "../../hooks/useMainProvider"
 import addTransactionStyle from "../../styles/addTransaction.module.css"
 
 
@@ -43,6 +44,7 @@ const initValidateFormState = {
 const AddTransaction = (props: PropsType) => {
     
     const { dispatch, transactions } = useTransactions()
+    const { setMessage } = useMainProvider()
     const [newTransaction, setNewTransaction] = useState<formType>(initFormState)
     const [validations, setValidations] = useState<validateFormType>(initValidateFormState)
     const [validated, setValidated] = useState<boolean>(false)
@@ -98,7 +100,7 @@ const AddTransaction = (props: PropsType) => {
             description,
         }
 
-        addSingleTransaction(dispatch, myNewTransaction)
+        addSingleTransaction(dispatch, setMessage, myNewTransaction)
         setNewTransaction(initFormState)
         setValidations(initValidateFormState)
         setValidated(false)

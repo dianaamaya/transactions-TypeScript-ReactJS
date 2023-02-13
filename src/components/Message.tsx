@@ -1,26 +1,22 @@
 import { useEffect } from "react"
 import messageStyle from "../styles/message.module.css"
-import useTransactions from "../hooks/useTransactions"
-import { REDUCER_ACTION_TYPE } from "../context/contextTypes"
+import useMainProvider from "../hooks/useMainProvider"
 
 type PropsType = {}
 
 const Message = (props: PropsType) => {
 
-    const { message, dispatch } = useTransactions()
+    const { message, setMessage } = useMainProvider()
 
     useEffect(() => {
         if (message.msg) {
-            setTimeout(() => dispatch({
-                type: REDUCER_ACTION_TYPE.SET_MESSAGE,
-                payload: { type: "success", msg: "" }
-            }), 3000)
+            setTimeout(() => setMessage({ type: "success", msg: "" }), 3000)
         }
-    }, [message.msg, dispatch])
+    }, [message.msg, setMessage])
 
     const content = message.msg ? (
         <div data-testid='alert' role="alert" className={`${messageStyle.alert__content} ${messageStyle[message.type]}`}>
-            {message.msg}
+            { message.msg }
         </div>
     ) : null
 

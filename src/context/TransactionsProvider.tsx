@@ -1,12 +1,11 @@
 import { useMemo, useReducer, createContext, ReactElement } from "react"
 import moment from "moment-timezone"
-import { TransactionType, StateType, ReducerAction, message, REDUCER_ACTION_TYPE, ReducerActionType } from "./contextTypes"
+import { TransactionType, StateType, ReducerAction, REDUCER_ACTION_TYPE, ReducerActionType } from "./contextTypes"
 
 const initState: StateType = { 
 	search: "", 
 	pagination: 1,
 	transactions: [],
-    message: { type:"success", msg: ""},
 }
 
 const reducer = (state: StateType, action: ReducerAction): StateType => {
@@ -45,10 +44,6 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
             return { ...state, transactions: [...action.payload] }
         }
 
-        case REDUCER_ACTION_TYPE.SET_MESSAGE: {
-
-            return { ...state, message: action.payload }
-        }
         default:
             throw new Error('Unidentified reducer action type')
     }
@@ -69,19 +64,18 @@ const useTransactionContext = () => {
         }, 0)
     )}, [state.transactions])
 
-	const transactions = useMemo((): TransactionType[] => {
-        return state.transactions.sort((a, b) => moment(b.date).diff(moment(a.date)))
-    }, [state.transactions])
-
 	const filteredTransactions = useMemo((): TransactionType[] => {
+        
+        const transactions: TransactionType[] = state.transactions.sort((a, b) => 
+            moment(b.date).diff(moment(a.date)))
+
 		return state.search 
 		? transactions.filter(transaction => 
 			((transaction.beneficiary).toLowerCase()).includes(state.search.toLocaleLowerCase()))
 		: transactions
-	}, [state.search, transactions]) 
+	}, [state.search, state.transactions]) 
 
     const pagination: number = state.pagination
-    const message: message = state.message
     const transactionQty: number = filteredTransactions.length		
 	const initialPosition: number = 20 * (pagination - 1)
 	const transactionsInPage: TransactionType[] = 
@@ -93,8 +87,7 @@ const useTransactionContext = () => {
 		balance, 
 		transactions: transactionsInPage,
 		pagination, 
-		transactionsQty: transactionQty,
-        message
+		transactionsQty: transactionQty
 	}
 }
 

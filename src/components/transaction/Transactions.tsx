@@ -1,6 +1,7 @@
 import { ReactElement, useState, useEffect } from "react"
 import { getTransactions, deleteTransaction } from "../../context/apiRequest"
 import useTransactions from "../../hooks/useTransactions"
+import useMainProvider from "../../hooks/useMainProvider"
 import SingleTransaction from "./SingleTransaction"
 import Pagination from "../Pagination"
 import Modal from "../Modal"
@@ -11,13 +12,17 @@ type PropsType = {}
 const Transactions = (props: PropsType) => {
 
   const { dispatch, transactions } = useTransactions()
+  const { loaded, setLoaded, setMessage } = useMainProvider()
   const [modal, setModal] = useState<boolean>(false)
-  const [loaded, setLoaded] = useState<boolean>(false)
   const [selectedTransaction, setSelectedTransaction] = useState<number | null>(null)
 
   useEffect(() => {
-		getTransactions(dispatch).then(() => setLoaded(true))
-  }, [dispatch])
+    if (!loaded) {
+      getTransactions(dispatch, setMessage)
+      .then(() => setLoaded(true))
+      .catch(() => setLoaded(true))
+    }
+  }, [dispatch, loaded, setLoaded, setMessage])
 
   const cancelRemoveTransaction = () => {
     setModal(false) 
@@ -27,7 +32,7 @@ const Transactions = (props: PropsType) => {
   const removeTransaction = () => {
 
     if (selectedTransaction !== null) {
-      deleteTransaction(dispatch, selectedTransaction)
+      deleteTransaction(dispatch, setMessage, selectedTransaction)
       window.scrollTo({
         behavior: 'smooth',
         top: 0,
