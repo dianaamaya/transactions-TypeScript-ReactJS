@@ -22,8 +22,12 @@ const Filter = (props: PropsType) => {
     }, [REDUCER_ACTIONS.FILTER, dispatch])
 
     const content = (
-        <form className={filterStyle.searchForm} onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
+        <form
+          className={filterStyle.searchForm} 
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}
+        >
           <input 
+            data-testid="search"
             id="search"
             type="text" 
             role="searchbox"

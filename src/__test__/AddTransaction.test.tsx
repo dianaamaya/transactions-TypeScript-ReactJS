@@ -1,25 +1,8 @@
 import userEvent from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react';
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
+import { server } from './__mocks__/server'
 import App from '../App';
 import AddTransaction from '../components/transaction/AddTransaction';
-
-const GET_TRANSACTION_API = process.env.REACT_APP_GET_TRANSACTION_API || ''
-
-const server = setupServer(
-  rest.get(GET_TRANSACTION_API, (req, res, ctx) => {
-    return res(ctx.json([{
-      id: 0,
-      amount: -2008.75,
-      beneficiary: "Callie Nieves",
-      account: "PL10104092290785174000000000",
-      address: "185 Berkeley Place, Brady, West Virginia, 7409",
-      date: "2021-12-15T01:05:42",
-      description: "Amet amet qui proident sint esse adipisicing amet."
-    }]))
-  }),
-)
 
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
