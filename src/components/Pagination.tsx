@@ -19,7 +19,7 @@ const Pagination = ({ pageSize = 20, }: PropsType) => {
         
         dispatch({ 
             type: REDUCER_ACTIONS.CHANGE_PAGINATION, 
-            payload: { pagination: currentPagination }
+            payload: currentPagination
         })
     }, [REDUCER_ACTIONS.CHANGE_PAGINATION, dispatch, totalPages])
     

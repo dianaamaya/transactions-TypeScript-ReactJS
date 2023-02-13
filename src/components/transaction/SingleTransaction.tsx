@@ -1,10 +1,10 @@
-import { ReactElement, memo } from "react"
-import { TransactionItemType } from "../../context/types"
+import React, { ReactElement, memo } from "react"
+import { TransactionType } from "../../context/contextTypes"
 import { FaRegTrashAlt } from "react-icons/fa"
 import moment from 'moment-timezone'
 
 type PropsType = {
-    transaction: TransactionItemType,
+    transaction: TransactionType,
     setModal: React.Dispatch<React.SetStateAction<boolean>>,
     setSelectedTransaction: React.Dispatch<React.SetStateAction<number | null>>,
 }
@@ -38,8 +38,8 @@ const SingleTransaction = ({ transaction, setModal, setSelectedTransaction }: Pr
 function areTransactionsEqual({ transaction: prevTransaction }: PropsType, { transaction: nextTransaction }: PropsType) {
     return (
         Object.keys(prevTransaction).every(key => {
-            return prevTransaction[key as keyof TransactionItemType] ===
-            nextTransaction[key as keyof TransactionItemType]
+            return prevTransaction[key as keyof TransactionType] ===
+            nextTransaction[key as keyof TransactionType]
         }) 
     )
 }

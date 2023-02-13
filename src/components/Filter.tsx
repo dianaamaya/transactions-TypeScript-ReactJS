@@ -16,7 +16,7 @@ const Filter = (props: PropsType) => {
 
       dispatch({ 
         type: REDUCER_ACTIONS.FILTER, 
-        payload: { search: searchText }
+        payload: searchText
       })
       setSearch(e.target.value)
     }, [REDUCER_ACTIONS.FILTER, dispatch])

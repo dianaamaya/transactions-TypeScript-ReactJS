@@ -1,35 +1,21 @@
 import { useMemo, useReducer, createContext, ReactElement } from "react"
 import moment from "moment-timezone"
-import { ADD, REMOVE, FILTER, CHANGE_PAGINATION, SET_DATA, SET_MESSAGE } from "./reducerTypes"
-import { TransactionItemType, TransactionStateType, ReducerAction, message } from "./types"
+import { TransactionType, StateType, ReducerAction, message, REDUCER_ACTION_TYPE, ReducerActionType } from "./contextTypes"
 
-const initTransactionState: TransactionStateType = { 
+const initState: StateType = { 
 	search: "", 
 	pagination: 1,
 	transactions: [],
     message: { type:"success", msg: ""},
 }
 
-const REDUCER_ACTION_TYPE = { 
-    ADD, 
-    REMOVE, 
-    FILTER, 
-    CHANGE_PAGINATION, 
-    SET_DATA, 
-    SET_MESSAGE
-}
+const reducer = (state: StateType, action: ReducerAction): StateType => {
 
-export type ReducerActionType = typeof REDUCER_ACTION_TYPE
-
-const reducer = (state: TransactionStateType, action: ReducerAction): TransactionStateType => {
     switch (action.type) {
-        case REDUCER_ACTION_TYPE.ADD: {
-			
-            if (action?.payload?.transaction === undefined) {
-                throw new Error('action.payload missing in ADD action')
-            }
 
-            const { id, amount, beneficiary, account, address, date, description  } = action.payload.transaction
+        case REDUCER_ACTION_TYPE.ADD: {
+
+            const { id, amount, beneficiary, account, address, date, description  } = action.payload
 
             return { ...state,  
 				pagination: 1,
@@ -37,54 +23,31 @@ const reducer = (state: TransactionStateType, action: ReducerAction): Transactio
             }
         }
         case REDUCER_ACTION_TYPE.REMOVE: {
-            if (action?.payload?.transactionId === undefined) {
-                throw new Error('action.payload missing in REMOVE action')
-            }
 
-            const { transactionId } = action.payload
-            const filteredTransaction: TransactionItemType[] = state.transactions.filter(item => item.id !== transactionId)
+            const filteredTransaction: TransactionType[] = state.transactions.filter(item => 
+                item.id !== action.payload)
 
             return { ...state, transactions: [...filteredTransaction], pagination: 1 }
         }
 
 		case REDUCER_ACTION_TYPE.FILTER: {
-            if (action?.payload?.search === undefined) {
-                throw new Error('action.payload missing in FILTER action')
-            }
 
-            const { search } = action.payload
-
-            return { ...state, search: search, pagination: 1 }
+            return { ...state, search: action.payload, pagination: 1 }
         }
 
 		case REDUCER_ACTION_TYPE.CHANGE_PAGINATION: {
-            if (action?.payload?.pagination === undefined) {
-                throw new Error('action.payload missing in CHANGE_PAGINATION action')
-            }
 
-            const { pagination } = action.payload
-
-            return { ...state, pagination: pagination }
+            return { ...state, pagination: action.payload }
         }
 
 		case REDUCER_ACTION_TYPE.SET_DATA: {
-            if (action?.payload?.transactionsList === undefined) {
-                throw new Error('action.payload missing in CHANGE_PAGINATION action')
-            }
 
-            const { transactionsList } = action.payload
-
-            return { ...state, transactions: [...transactionsList] }
+            return { ...state, transactions: [...action.payload] }
         }
 
         case REDUCER_ACTION_TYPE.SET_MESSAGE: {
-            if (action?.payload?.message === undefined) {
-                throw new Error('action.payload missing in CHANGE_PAGINATION action')
-            }
 
-            const { message } = action.payload
-
-            return { ...state, message: message }
+            return { ...state, message: action.payload }
         }
         default:
             throw new Error('Unidentified reducer action type')
@@ -93,7 +56,7 @@ const reducer = (state: TransactionStateType, action: ReducerAction): Transactio
 
 const useTransactionContext = () => {
 
-	const [state, dispatch] = useReducer(reducer, initTransactionState)
+	const [state, dispatch] = useReducer(reducer, initState)
 
     const REDUCER_ACTIONS = useMemo((): ReducerActionType => {
         return REDUCER_ACTION_TYPE
@@ -106,11 +69,11 @@ const useTransactionContext = () => {
         }, 0)
     )}, [state.transactions])
 
-	const transactions = useMemo((): TransactionItemType[] => {
+	const transactions = useMemo((): TransactionType[] => {
         return state.transactions.sort((a, b) => moment(b.date).diff(moment(a.date)))
     }, [state.transactions])
 
-	const filteredTransactions = useMemo((): TransactionItemType[] => {
+	const filteredTransactions = useMemo((): TransactionType[] => {
 		return state.search 
 		? transactions.filter(transaction => 
 			((transaction.beneficiary).toLowerCase()).includes(state.search.toLocaleLowerCase()))
@@ -121,7 +84,7 @@ const useTransactionContext = () => {
     const message: message = state.message
     const transactionQty: number = filteredTransactions.length		
 	const initialPosition: number = 20 * (pagination - 1)
-	const transactionsInPage: TransactionItemType[] = 
+	const transactionsInPage: TransactionType[] = 
         filteredTransactions.slice(initialPosition, initialPosition + 20)
 	
     return { 
@@ -138,13 +101,11 @@ const useTransactionContext = () => {
 export type UseTransactionContextType = ReturnType<typeof useTransactionContext>
 
 const initTransactionContextState: UseTransactionContextType = {
+    ...initState,
     dispatch: () => {},
     REDUCER_ACTIONS: REDUCER_ACTION_TYPE,
     balance: "",
-    transactions: [],
-	pagination: 1,
 	transactionsQty: 0,
-    message: { type: "success", msg: ""}
 }
 
 const TransactionContext = createContext<UseTransactionContextType>(initTransactionContextState)

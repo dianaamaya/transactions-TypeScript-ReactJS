@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import messageStyle from "../styles/message.module.css"
 import useTransactions from "../hooks/useTransactions"
-import { SET_MESSAGE } from "../context/reducerTypes"
+import { REDUCER_ACTION_TYPE } from "../context/contextTypes"
 
 type PropsType = {}
 
@@ -12,8 +12,8 @@ const Message = (props: PropsType) => {
     useEffect(() => {
         if (message.msg) {
             setTimeout(() => dispatch({
-                type: SET_MESSAGE,
-                payload: { message: { type: "success", msg: "" }}
+                type: REDUCER_ACTION_TYPE.SET_MESSAGE,
+                payload: { type: "success", msg: "" }
             }), 3000)
         }
     }, [message.msg, dispatch])
