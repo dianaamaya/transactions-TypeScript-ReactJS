@@ -1,10 +1,11 @@
 import { Routes, Route, BrowserRouter as Router} from 'react-router-dom'
+import { MainProvider } from './context/MainProvider'
+import { TransactionsProvider } from './context/TransactionsProvider'
 import Header from "./components/Header"
 import Transactions from "./components/transaction/Content"
 import Description from "./components/Description"
 import Footer from "./components/Footer"
-import { MainProvider } from './context/MainProvider'
-import { TransactionsProvider } from './context/TransactionsProvider'
+
 
 function App() {
   

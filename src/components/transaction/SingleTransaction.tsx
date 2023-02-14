@@ -1,4 +1,5 @@
 import React, { ReactElement, memo } from "react"
+import { plnCurrency } from "../../utilities/currencyFormat"
 import { TransactionType } from "../../context/contextTypes"
 import { FaRegTrashAlt } from "react-icons/fa"
 import moment from 'moment-timezone'
@@ -14,7 +15,7 @@ const SingleTransaction = ({ transaction, setModal, setSelectedTransaction }: Pr
     const content =
       <tr key={transaction.id}>
         <td>{transaction.id}</td>
-        <td>{new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(transaction.amount)}</td>
+        <td>{plnCurrency(transaction.amount)}</td>
         <td>{transaction.beneficiary}</td>
         <td>{transaction.account} </td>
         <td>{transaction.address} </td>

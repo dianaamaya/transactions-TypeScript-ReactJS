@@ -19,7 +19,7 @@ const MainContext = createContext<ContextType>(initState)
 
 type ChildrenType = { children?: ReactElement | ReactElement[] }
 
-export const MainProvider = ({ children }: ChildrenType): ReactElement => {
+const MainProvider = ({ children }: ChildrenType): ReactElement => {
 
     const [loaded, setLoaded] = useState<boolean>(initState.loaded)
     const [message, setMessage] = useState<message>(initState.message)
@@ -37,4 +37,4 @@ export const MainProvider = ({ children }: ChildrenType): ReactElement => {
     ) 
 }
 
-export default MainContext 
+export { MainContext, MainProvider } 

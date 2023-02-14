@@ -1,6 +1,13 @@
-import { useMemo, useReducer, createContext, ReactElement } from "react"
-import moment from "moment-timezone"
-import { TransactionType, StateType, ReducerAction, REDUCER_ACTION_TYPE, ReducerActionType } from "./contextTypes"
+import { useReducer, createContext, ReactElement } from "react"
+import { transactionReducer } from "./transactionReducer"
+import { TransactionType, StateType, ReducerAction } from "./contextTypes"
+
+type UseTransactionContextType = {
+	search: string;
+    pagination: number;
+    transactions: TransactionType[];
+	dispatch: React.Dispatch<ReducerAction>
+}
 
 const initState: StateType = { 
 	search: "", 
@@ -8,109 +15,23 @@ const initState: StateType = {
 	transactions: [],
 }
 
-const reducer = (state: StateType, action: ReducerAction): StateType => {
-
-    switch (action.type) {
-
-        case REDUCER_ACTION_TYPE.ADD: {
-
-            const { id, amount, beneficiary, account, address, date, description  } = action.payload
-
-            return { ...state,  
-				pagination: 1,
-                transactions: [ ...state.transactions, { id, amount, beneficiary, account, address, date, description}]
-            }
-        }
-        case REDUCER_ACTION_TYPE.REMOVE: {
-
-            const filteredTransaction: TransactionType[] = state.transactions.filter(item => 
-                item.id !== action.payload)
-
-            return { ...state, transactions: [...filteredTransaction], pagination: 1 }
-        }
-
-		case REDUCER_ACTION_TYPE.FILTER: {
-
-            return { ...state, search: action.payload, pagination: 1 }
-        }
-
-		case REDUCER_ACTION_TYPE.CHANGE_PAGINATION: {
-
-            return { ...state, pagination: action.payload }
-        }
-
-		case REDUCER_ACTION_TYPE.SET_DATA: {
-
-            return { ...state, transactions: [...action.payload] }
-        }
-
-        default:
-            throw new Error('Unidentified reducer action type')
-    }
-}
-
-const useTransactionContext = () => {
-
-	const [state, dispatch] = useReducer(reducer, initState)
-
-    const REDUCER_ACTIONS = useMemo((): ReducerActionType => {
-        return REDUCER_ACTION_TYPE
-    }, [])
-
-    const balance = useMemo((): string => {
-		return new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(
-			state.transactions.reduce((previousValue, transactionItem) => {
-            return previousValue + transactionItem.amount
-        }, 0)
-    )}, [state.transactions])
-
-	const filteredTransactions = useMemo((): TransactionType[] => {
-        
-        const transactions: TransactionType[] = state.transactions.sort((a, b) => 
-            moment(b.date).diff(moment(a.date)))
-
-		return state.search 
-		? transactions.filter(transaction => 
-			((transaction.beneficiary).toLowerCase()).includes(state.search.toLocaleLowerCase()))
-		: transactions
-	}, [state.search, state.transactions]) 
-
-    const pagination: number = state.pagination
-    const transactionQty: number = filteredTransactions.length		
-	const initialPosition: number = 20 * (pagination - 1)
-	const transactionsInPage: TransactionType[] = 
-        filteredTransactions.slice(initialPosition, initialPosition + 20)
-	
-    return { 
-		dispatch, 
-		REDUCER_ACTIONS, 
-		balance, 
-		transactions: transactionsInPage,
-		pagination, 
-		transactionsQty: transactionQty
-	}
-}
-
-export type UseTransactionContextType = ReturnType<typeof useTransactionContext>
-
-const initTransactionContextState: UseTransactionContextType = {
-    ...initState,
-    dispatch: () => {},
-    REDUCER_ACTIONS: REDUCER_ACTION_TYPE,
-    balance: "",
-	transactionsQty: 0,
+const initTransactionContextState = {
+	...initState,
+	dispatch: () => {}
 }
 
 const TransactionContext = createContext<UseTransactionContextType>(initTransactionContextState)
 
 type ChildrenType = { children?: ReactElement | ReactElement[] }
 
-export const TransactionsProvider = ({ children }: ChildrenType): ReactElement => {
+const TransactionsProvider = ({ children }: ChildrenType): ReactElement => {
+
+	const [state, dispatch] = useReducer(transactionReducer, initState)
 	
-    return (<TransactionContext.Provider value={useTransactionContext()}>
+    return (<TransactionContext.Provider value={{...state, dispatch}}>
             {children}
         </TransactionContext.Provider>
     ) 
 }
 
-export default TransactionContext 
+export { TransactionContext, TransactionsProvider } 
